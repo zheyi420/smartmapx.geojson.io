@@ -72,6 +72,9 @@ const initMap = (params) => {
     center: [121.445106,31.228389], // [116.39738, 39.90579],
     zoom: 5,
     // pitch: 70,
+    dragRotate: false,
+    // pitchWithRotate: false,
+    keyboard: false,
     attributionControl: false,
   });
 

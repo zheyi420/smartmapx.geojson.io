@@ -8,12 +8,12 @@
     <!-- Box -->
     <div id="box-info" class="info-list">
       <label>Box</label>
-      <span>{{ BoxCoords.lng }},{{ BoxCoords.lat }}</span>
+      <span>{{ BoxCoords.sw.lng }},{{ BoxCoords.sw.lat }},{{ BoxCoords.ne.lng }},{{ BoxCoords.ne.lat }}</span>
     </div>
     <!-- Map -->
     <div id="map-info" class="info-list">
-      <label>Map</label>
-      <span>{{ MapCoords.lng }},{{ MapCoords.lat }}</span>
+      <label>Map Bound</label>
+      <span>{{ MapCoords.sw.lng }},{{ MapCoords.sw.lat }},{{ MapCoords.ne.lng }},{{ MapCoords.ne.lat }}</span>
     </div>
     <!-- Center -->
     <div id="center-info" class="info-list">
@@ -25,26 +25,14 @@
 
 <script setup>
 import { computed, onMounted, reactive } from 'vue';
+import { useGeoInfoPanelStore } from '../stores/states';
 
-let MouseCoords = reactive({
-  lng: 0,
-  lat: 0
-});
+const GeoInfoPanelStore = useGeoInfoPanelStore();
 
-let CenterCoords = reactive({
-  lng: 0,
-  lat: 0
-});
-
-let BoxCoords = reactive({
-  lng: 0,
-  lat: 0
-});
-
-let MapCoords = reactive({
-  lng: 0,
-  lat: 0
-});
+const MouseCoords = computed(() => GeoInfoPanelStore.getMouseCoords);
+const BoxCoords = computed(() => GeoInfoPanelStore.getBoxCoords);
+const MapCoords = computed(() => GeoInfoPanelStore.getMapCoords);
+const CenterCoords = computed(() => GeoInfoPanelStore.getCenterCoords);
 
 </script>
 
@@ -53,10 +41,11 @@ let MapCoords = reactive({
   font-family: "Courier New", Courier, monospace;
   height: fit-content;
   width: fit-content;
-  min-width: 300px;
+  min-width: 800px;
   text-align: left;
   box-sizing: border-box;
   background-color: #f6eeee;
+  padding: 5px 0px 0px 0px;
 }
 
 .info-list {
@@ -73,7 +62,7 @@ let MapCoords = reactive({
   text-align: center;
   display: inline-block;
   padding-left: 2px;
-  width: 60px;
+  width: 90px;
 }
 
 .info-list span {

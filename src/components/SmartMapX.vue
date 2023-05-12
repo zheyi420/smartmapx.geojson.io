@@ -11,6 +11,7 @@
 import { computed, onMounted, reactive } from 'vue';
 import init from '../utils/initMap';
 import GeoInfoPanel from './GeoInfoPanel.vue';
+import { useGeoInfoPanelStore } from '../stores/states';
 
 let map;
 
@@ -18,7 +19,44 @@ onMounted(() => {
   map = init({
     container: 'map'
   });
+
+  map.on('load', () => {
+    // register events
+    registerMapMoveEvent();
+    registerMapDataEvent();
+    registerMapMouseEvent();
+  });
 });
+
+const GeoInfoPanelStore = useGeoInfoPanelStore();
+const registerMapMoveEvent = () => {
+  map.on('moveend', () => {
+    const bounds = map.getBounds();
+    GeoInfoPanelStore.recordMapCoords({
+      sw: {
+        lng: bounds.getWest(),
+        lat: bounds.getSouth()
+      },
+      ne: {
+        lng: bounds.getEast(),
+        lat: bounds.getNorth()
+      }
+    });
+
+    const center = bounds.getCenter();
+    GeoInfoPanelStore.recordCenterCoords({
+      lng: center.lng,
+      lat: center.lat
+    });
+  });
+};
+const registerMapDataEvent = () => { };
+const registerMapMouseEvent = () => {
+  map.on('mousemove', (e) => {
+    GeoInfoPanelStore.recordMouseCoords(e.lngLat);
+  });
+};
+
 
 </script>
 
@@ -26,7 +64,7 @@ onMounted(() => {
 .geo-info-panel {
   position: absolute;
   bottom: 0;
-  right: 0;
+  left: 210px;
   z-index: 1;
 }
 
