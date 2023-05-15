@@ -15,10 +15,10 @@ export const useCounterStore = defineStore('counter', () => {
 
 export const useGeoInfoPanelStore = defineStore('GeoInfoPanel', () => {
   // state
-  const MouseCoords = reactive({lng: 0, lat: 0});
-  const BoxCoords = reactive({ sw: {lng: 0, lat: 0}, ne: {lng: 0, lat: 0} });
-  const MapCoords = reactive({ sw: {lng: 0, lat: 0}, ne: {lng: 0, lat: 0} });
-  const CenterCoords = reactive({lng: 0, lat: 0});
+  const MouseCoords = reactive({ lng: 0, lat: 0 });
+  const BoxCoords = reactive({ sw: { lng: 0, lat: 0 }, ne: { lng: 0, lat: 0 } });
+  const MapCoords = reactive({ sw: { lng: 0, lat: 0 }, ne: { lng: 0, lat: 0 } });
+  const CenterCoords = reactive({ lng: 0, lat: 0 });
 
   // getters
   const getMouseCoords = computed(() => MouseCoords);
@@ -54,4 +54,53 @@ export const useGeoInfoPanelStore = defineStore('GeoInfoPanel', () => {
     recordMapCoords,
     recordCenterCoords
   };
+});
+
+export const useCustomizedFeaturesStore = defineStore('CustomizedFeatures', () => {
+  // state
+  const Features = reactive({});
+
+  // getters
+  const getFeatures = computed(() => Features);
+
+  // actions
+  function addFeature(params) {
+    console.log('addFeature:', params);
+    console.log('Features:', Features);
+    Features[params.id] = params.feature;
+  }
+
+  function removeFeature(params) {
+    Features[params.id] = undefined;
+  }
+
+  function updateFeature(params) {
+    Features[params.id] = params.feature;
+  }
+});
+
+export const _useCustomizedFeaturesStore = defineStore('CustomizedFeatures', {
+  state: () => ({
+    Features: {},
+  }),
+
+  getters: {
+    getFeatures: (state) => state.Features,
+  },
+
+  actions: {
+    addFeature(params) {
+      console.log('addFeature:', params);
+      console.log('Features:', this.Features);
+      this.Features[params.id] = params.feature;
+    },
+
+    removeFeature(params) {
+      this.Features[params.id] = undefined;
+    },
+
+    updateFeature(params) {
+      this.Features[params.id] = params.feature;
+    },
+  }
 });

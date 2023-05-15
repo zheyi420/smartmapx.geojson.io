@@ -1,4 +1,8 @@
 import { loadScript } from ".";
+import pinia from "../stores/store";
+import { useCustomizedFeaturesStore } from "../stores/states";
+
+const CustomizedFeaturesStore = useCustomizedFeaturesStore(pinia);
 
 const smartmapxJsScriptUrls = {
   'v1': 'https://dev.smartmapx.com/map/assets/smartmapx.js',
@@ -23,25 +27,19 @@ const importSmartMapX = () => {
 }
 
 const addControls = (map) => {
-
-  map.addControl(new smartmapx.AttributionControl({ compact: false }));
-
+  const attrCtrl = new smartmapx.AttributionControl({ compact: false });
   const measureControl = new smartmapx.MeasureControl();
-  map.addControl(measureControl, 'top-left');
-
   const scaleControl = new smartmapx.ScaleControl({
     maxWidth: 100,
     unit: 'm'
   });
-  map.addControl(scaleControl, 'bottom-left');
-
-  // add scale control
-  const nav = new smartmapx.NavigationControl();
-  map.addControl(nav, 'top-right');
-
-
+  const nav = new smartmapx.NavigationControl({
+    showCompass: false,
+    // visualizePitch: true
+  });
   const drawControl = new smartmapx.DrawControl({ // FIXME could not find DrawControl in the dev doc.
-    displayControlsDefault: false,
+    // sample code: https://dev.smartmapx.com/docs/javascriptAPI/#control_4
+    displayControlsDefault: true, // 控件“合并”，“取消合并”
     controls: {
       point: true,
       line_string: true,
@@ -49,15 +47,46 @@ const addControls = (map) => {
       trash: true
     }
   });
-  map.addControl(drawControl, 'top-left');
-  map.on('draw.create', function (e) {
-    console.log(JSON.stringify(e.features[0]));
-  });
 
-  map.on('draw.update', function (e) {
-    console.log(JSON.stringify(e.features[0]));
-  });
+  map
+    .addControl(attrCtrl, 'bottom-left')
+    .addControl(measureControl, 'top-left')
+    .addControl(drawControl, 'top-left')
+    .addControl(nav, 'top-right')
+    .addControl(scaleControl, 'bottom-left')
+    .on('draw.create', function (e) {
+      console.log('draw.create:', e.features);
+      CustomizedFeaturesStore.addFeature({
+        id: e.features[0].id,
+        feature: e.features[0]
+      });
+    })
+    .on('draw.update', function (e) {
+      console.log('draw.update:', JSON.stringify(e.features[0]));
+      CustomizedFeaturesStore.updateFeature({
+        id: e.features[0].id,
+        feature: e.features[0]
+      });
+    });
 
+  // 几何画完后获取更新几何数据到编辑器中。
+  // 1. 从draw.create事件中获取
+  // 2. 从draw.update事件中获取
+  // 3. 从draw.delete事件中获取
+  // 4. 从draw.selectionchange事件中获取
+  // 5. 从draw.modechange事件中获取
+  // 6. 从draw.render事件中获取
+  // 7. 从draw.actionable事件中获取
+  // 8. 从draw.combine事件中获取
+  // 9. 从draw.uncombine事件中获取
+  // 10. 从draw.trash事件中获取
+
+
+  // hide controls: 'full map', 'compass'
+  const domCtrlFullMap = document.getElementsByClassName('smartmapx-ctrl-full-map')[0];
+  domCtrlFullMap.style.display = 'none';
+  const domCtrlCompass = document.getElementsByClassName('smartmapx-ctrl-compass')[0];
+  domCtrlCompass.style.display = 'none';
 }
 
 const initMap = (params) => {
@@ -69,7 +98,7 @@ const initMap = (params) => {
   const map = new smartmapx.Map({
     container: params.container,
     mapId: 'map_id_32',
-    center: [121.445106,31.228389], // [116.39738, 39.90579],
+    center: [121.445106, 31.228389], // [116.39738, 39.90579],
     zoom: 5,
     // pitch: 70,
     dragRotate: false,
@@ -78,7 +107,19 @@ const initMap = (params) => {
     attributionControl: false,
   });
 
-  addControls(map);
+  const canvasStyle = document.getElementsByClassName('smartmapx-canvas')[0].style;
+  canvasStyle.position = 'relative';
+
+  map
+    .on('load', () => {
+      addControls(map);
+    });
+    /* .on('data', () => {
+      console.log('A data event occurred.');
+    })
+    .on('sourcedata', () => {
+      console.log('A sourcedata event occurred.');
+    }); */
 
   return map;
 }
@@ -87,9 +128,6 @@ export default function init(params) {
   // importSmartMapX();
 
   const map = initMap(params);
-
-  const canvasStyle = document.getElementsByClassName('smartmapx-canvas')[0].style;
-  canvasStyle.position = 'relative';
 
   return map;
 }

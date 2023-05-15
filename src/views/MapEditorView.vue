@@ -2,14 +2,14 @@
   <TopBar class="top-bar"></TopBar>
   <div class="content">
     <SmartMapX class="map-panel"></SmartMapX>
-    <DataPanel class="data-panel"></DataPanel>
+    <EditorPanel class="editor-panel"></EditorPanel>
   </div>
 </template>
 
 <script setup>
 import TopBar from '../components/TopBar.vue';
 import SmartMapX from "../components/SmartMapX.vue";
-import DataPanel from '../components/DataPanel.vue';
+import EditorPanel from '../components/EditorPanel.vue';
 
 </script>
 
@@ -33,7 +33,7 @@ import DataPanel from '../components/DataPanel.vue';
   left: 0;
   top: 0;
 }
-.data-panel {
+.editor-panel {
   position: absolute;
   width: 30%;
   height: 100%;
