@@ -1,5 +1,3 @@
-// https://pinia.vuejs.org/core-concepts/#setup-stores
-
 import { ref, computed, reactive } from 'vue'
 import { defineStore } from 'pinia'
 
@@ -13,94 +11,54 @@ export const useCounterStore = defineStore('counter', () => {
   return { count, doubleCount, increment }
 })
 
-export const useGeoInfoPanelStore = defineStore('GeoInfoPanel', () => {
-  // state
-  const MouseCoords = reactive({ lng: 0, lat: 0 });
-  const BoxCoords = reactive({ sw: { lng: 0, lat: 0 }, ne: { lng: 0, lat: 0 } });
-  const MapCoords = reactive({ sw: { lng: 0, lat: 0 }, ne: { lng: 0, lat: 0 } });
-  const CenterCoords = reactive({ lng: 0, lat: 0 });
-
-  // getters
-  const getMouseCoords = computed(() => MouseCoords);
-  const getBoxCoords = computed(() => BoxCoords);
-  const getMapCoords = computed(() => MapCoords);
-  const getCenterCoords = computed(() => CenterCoords);
-
-  // mutations
-  function recordMouseCoords(params) {
-    MouseCoords.lng = params.lng;
-    MouseCoords.lat = params.lat;
-  }
-  function recordBoxCoords(params) {
-    BoxCoords.sw = JSON.parse(JSON.stringify(params.sw));
-    BoxCoords.ne = JSON.parse(JSON.stringify(params.ne));
-  }
-  function recordMapCoords(params) {
-    MapCoords.sw = JSON.parse(JSON.stringify(params.sw));
-    MapCoords.ne = JSON.parse(JSON.stringify(params.ne));
-  }
-  function recordCenterCoords(params) {
-    CenterCoords.lng = params.lng;
-    CenterCoords.lat = params.lat;
-  }
-
-  return {
-    getMouseCoords,
-    getBoxCoords,
-    getMapCoords,
-    getCenterCoords,
-    recordMouseCoords,
-    recordBoxCoords,
-    recordMapCoords,
-    recordCenterCoords
-  };
-});
-
-export const useCustomizedFeaturesStore = defineStore('CustomizedFeatures', () => {
-  // state
-  const Features = reactive({});
-
-  // getters
-  const getFeatures = computed(() => Features);
-
-  // actions
-  function addFeature(params) {
-    console.log('addFeature:', params);
-    console.log('Features:', Features);
-    Features[params.id] = params.feature;
-  }
-
-  function removeFeature(params) {
-    Features[params.id] = undefined;
-  }
-
-  function updateFeature(params) {
-    Features[params.id] = params.feature;
-  }
-});
-
-export const _useCustomizedFeaturesStore = defineStore('CustomizedFeatures', {
+export const useGeoInfoPanelStore = defineStore({
+  id: 'GeoInfoPanel',
   state: () => ({
-    Features: {},
+    MouseCoords: { lng: 0, lat: 0 },
+    BoxCoords: { sw: { lng: 0, lat: 0 }, ne: { lng: 0, lat: 0 } },
+    MapCoords: { sw: { lng: 0, lat: 0 }, ne: { lng: 0, lat: 0 } },
+    CenterCoords: { lng: 0, lat: 0 },
   }),
-
   getters: {
-    getFeatures: (state) => state.Features,
+    // 
   },
+  actions: {
+    recordMouseCoords(params) {
+      this.MouseCoords.lng = params.lng;
+      this.MouseCoords.lat = params.lat;
+    },
+    recordBoxCoords(params) {
+      this.BoxCoords.sw = JSON.parse(JSON.stringify(params.sw));
+      this.BoxCoords.ne = JSON.parse(JSON.stringify(params.ne));
+    },
+    recordMapCoords(params) {
+      this.MapCoords.sw = JSON.parse(JSON.stringify(params.sw));
+      this.MapCoords.ne = JSON.parse(JSON.stringify(params.ne));
+    },
+    recordCenterCoords(params) {
+      this.CenterCoords.lng = params.lng;
+      this.CenterCoords.lat = params.lat;
+    },
+  },
+});
 
+export const useCustomizedFeaturesStore = defineStore({
+  id: 'CustomizedFeatures',
+  state: () => ({
+    features: {},
+  }),
+  getters: {
+    // getFeatures: (state) => state.features,
+  },
   actions: {
     addFeature(params) {
-      console.log('addFeature:', params);
-      console.log('Features:', this.Features);
-      this.Features[params.id] = params.feature;
+      this.features[params.id] = params.feature;
     },
-
     removeFeature(params) {
-      this.Features[params.id] = undefined;
+      this.features[params.id] = undefined;
     },
-
     updateFeature(params) {
-      this.Features[params.id] = params.feature;
+      this.features[params.id] = params.feature;
     },
-  }
+  },
 });

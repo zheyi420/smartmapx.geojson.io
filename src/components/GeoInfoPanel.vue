@@ -3,22 +3,22 @@
     <!-- Mouse -->
     <div id="mouse-info" class="info-list">
       <label>Mouse</label>
-      <span>{{ MouseCoords.lng }},{{ MouseCoords.lat }}</span>
+      <span>{{ GeoInfoPanelStore.MouseCoords.lng }},{{ GeoInfoPanelStore.MouseCoords.lat }}</span>
     </div>
     <!-- Box -->
     <div id="box-info" class="info-list">
       <label>Box</label>
-      <span>{{ BoxCoords.sw.lng }},{{ BoxCoords.sw.lat }},{{ BoxCoords.ne.lng }},{{ BoxCoords.ne.lat }}</span>
+      <span>{{ GeoInfoPanelStore.BoxCoords.sw.lng }},{{ GeoInfoPanelStore.BoxCoords.sw.lat }},{{ GeoInfoPanelStore.BoxCoords.ne.lng }},{{ GeoInfoPanelStore.BoxCoords.ne.lat }}</span>
     </div>
     <!-- Map -->
     <div id="map-info" class="info-list">
       <label>Map Bound</label>
-      <span>{{ MapCoords.sw.lng }},{{ MapCoords.sw.lat }},{{ MapCoords.ne.lng }},{{ MapCoords.ne.lat }}</span>
+      <span>{{ GeoInfoPanelStore.MapCoords.sw.lng }},{{ GeoInfoPanelStore.MapCoords.sw.lat }},{{ GeoInfoPanelStore.MapCoords.ne.lng }},{{ GeoInfoPanelStore.MapCoords.ne.lat }}</span>
     </div>
     <!-- Center -->
     <div id="center-info" class="info-list">
       <label>Center</label>
-      <span>{{ CenterCoords.lng }},{{ CenterCoords.lat }}</span>
+      <span>{{ GeoInfoPanelStore.CenterCoords.lng }},{{ GeoInfoPanelStore.CenterCoords.lat }}</span>
     </div>
   </div>
 </template>
@@ -29,10 +29,6 @@ import { useGeoInfoPanelStore } from '../stores/states';
 
 const GeoInfoPanelStore = useGeoInfoPanelStore();
 
-const MouseCoords = computed(() => GeoInfoPanelStore.getMouseCoords);
-const BoxCoords = computed(() => GeoInfoPanelStore.getBoxCoords);
-const MapCoords = computed(() => GeoInfoPanelStore.getMapCoords);
-const CenterCoords = computed(() => GeoInfoPanelStore.getCenterCoords);
 
 </script>
 

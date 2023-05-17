@@ -11,7 +11,7 @@
 import { computed, onMounted, reactive } from 'vue';
 import init from '../utils/initMap';
 import GeoInfoPanel from './GeoInfoPanel.vue';
-import { useGeoInfoPanelStore } from '../stores/states';
+import { useGeoInfoPanelStore, useCustomizedFeaturesStore } from '../stores/states';
 
 let map;
 
@@ -25,14 +25,15 @@ onMounted(() => {
     registerMapMoveEvent();
     registerMapDataEvent();
     registerMapMouseEvent();
+    registerDrawEvent();
   });
 });
 
-const GeoInfoPanelStore = useGeoInfoPanelStore();
+const store_GeoInfoPanel = useGeoInfoPanelStore();
 const registerMapMoveEvent = () => {
   map.on('moveend', () => {
     const bounds = map.getBounds();
-    GeoInfoPanelStore.recordMapCoords({
+    store_GeoInfoPanel.recordMapCoords({
       sw: {
         lng: bounds.getWest(),
         lat: bounds.getSouth()
@@ -44,7 +45,7 @@ const registerMapMoveEvent = () => {
     });
 
     const center = bounds.getCenter();
-    GeoInfoPanelStore.recordCenterCoords({
+    store_GeoInfoPanel.recordCenterCoords({
       lng: center.lng,
       lat: center.lat
     });
@@ -53,8 +54,50 @@ const registerMapMoveEvent = () => {
 const registerMapDataEvent = () => { };
 const registerMapMouseEvent = () => {
   map.on('mousemove', (e) => {
-    GeoInfoPanelStore.recordMouseCoords(e.lngLat);
+    store_GeoInfoPanel.recordMouseCoords(e.lngLat);
   });
+};
+
+const store_CustomizedFeatures = useCustomizedFeaturesStore();
+/**
+ * Register draw events
+ * 
+ * 几何编辑获取更新几何数据到编辑器中。
+ * 1. 从draw.create事件中获取
+ * 2. 从draw.update事件中获取
+ * 3. 从draw.delete事件中获取
+ * 4. 从draw.selectionchange事件中获取
+ * 5. 从draw.modechange事件中获取
+ * 6. 从draw.render事件中获取
+ * 7. 从draw.actionable事件中获取
+ * 8. 从draw.combine事件中获取
+ * 9. 从draw.uncombine事件中获取
+ * 10. 从draw.trash事件中获取
+ */
+const registerDrawEvent = () => {
+  map
+    .on('draw.create', (e) => {
+      console.log('draw.create:', e);
+      store_CustomizedFeatures.addFeature({
+        id: e.features[0].id,
+        feature: {
+          type: e.features[0].type,
+          properties: e.features[0].properties,
+          geometry: e.features[0].geometry
+        }
+      });
+    })
+    .on('draw.update', function (e) {
+      console.log('draw.update:', JSON.stringify(e.features[0]));
+      store_CustomizedFeatures.updateFeature({
+        id: e.features[0].id,
+        feature: {
+          type: e.features[0].type,
+          properties: e.features[0].properties,
+          geometry: e.features[0].geometry
+        }
+      });
+    })
 };
 
 

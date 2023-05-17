@@ -1,8 +1,8 @@
 import { loadScript } from ".";
-import pinia from "../stores/store";
-import { useCustomizedFeaturesStore } from "../stores/states";
+// import pinia from "../stores/store";
+// import { useCustomizedFeaturesStore } from "../stores/states";
 
-const CustomizedFeaturesStore = useCustomizedFeaturesStore(pinia);
+// const store_CustomizedFeatures = useCustomizedFeaturesStore(pinia); // work 但是提交未定义属性变更不成功。
 
 const smartmapxJsScriptUrls = {
   'v1': 'https://dev.smartmapx.com/map/assets/smartmapx.js',
@@ -53,34 +53,7 @@ const addControls = (map) => {
     .addControl(measureControl, 'top-left')
     .addControl(drawControl, 'top-left')
     .addControl(nav, 'top-right')
-    .addControl(scaleControl, 'bottom-left')
-    .on('draw.create', function (e) {
-      console.log('draw.create:', e.features);
-      CustomizedFeaturesStore.addFeature({
-        id: e.features[0].id,
-        feature: e.features[0]
-      });
-    })
-    .on('draw.update', function (e) {
-      console.log('draw.update:', JSON.stringify(e.features[0]));
-      CustomizedFeaturesStore.updateFeature({
-        id: e.features[0].id,
-        feature: e.features[0]
-      });
-    });
-
-  // 几何画完后获取更新几何数据到编辑器中。
-  // 1. 从draw.create事件中获取
-  // 2. 从draw.update事件中获取
-  // 3. 从draw.delete事件中获取
-  // 4. 从draw.selectionchange事件中获取
-  // 5. 从draw.modechange事件中获取
-  // 6. 从draw.render事件中获取
-  // 7. 从draw.actionable事件中获取
-  // 8. 从draw.combine事件中获取
-  // 9. 从draw.uncombine事件中获取
-  // 10. 从draw.trash事件中获取
-
+    .addControl(scaleControl, 'bottom-left');
 
   // hide controls: 'full map', 'compass'
   const domCtrlFullMap = document.getElementsByClassName('smartmapx-ctrl-full-map')[0];
