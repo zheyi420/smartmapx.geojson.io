@@ -1,16 +1,6 @@
 # smartmapx.geojson.io
 
-## Features
-
-### geo info
-
-- coordinate of the central point
-
-### smartmapx-ctrl
-
-- add control for straighten the pitch to 0.
-
-### 
+## Project Description
 
 
 ---

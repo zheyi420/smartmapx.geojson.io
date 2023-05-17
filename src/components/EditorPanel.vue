@@ -6,14 +6,11 @@
 
 <script setup>
 import { watch, computed, onMounted } from 'vue';
-import { storeToRefs } from 'pinia'
-import { useCustomizedFeaturesStore } from '../stores/states';
+import { useDrawFeaturesStore } from '../stores/states';
 
-const store_CustomizedFeatures = useCustomizedFeaturesStore();
+const store_DrawFeatures = useDrawFeaturesStore();
 
-const customizedFeatures = storeToRefs(store_CustomizedFeatures).features;
-
-watch(customizedFeatures,
+watch(store_DrawFeatures.features,
   (newVal, oldVal) => {
     console.log('newVal:', newVal);
     console.log('oldVal:', oldVal);

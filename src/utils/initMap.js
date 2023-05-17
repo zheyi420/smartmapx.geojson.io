@@ -1,8 +1,8 @@
 import { loadScript } from ".";
 // import pinia from "../stores/store";
-// import { useCustomizedFeaturesStore } from "../stores/states";
+// import { useDrawFeaturesStore } from "../stores/states";
 
-// const store_CustomizedFeatures = useCustomizedFeaturesStore(pinia); // work 但是提交未定义属性变更不成功。
+// const store_DrawFeatures = useDrawFeaturesStore(pinia); // work 但是提交未定义属性变更不成功。
 
 const smartmapxJsScriptUrls = {
   'v1': 'https://dev.smartmapx.com/map/assets/smartmapx.js',
@@ -37,15 +37,22 @@ const addControls = (map) => {
     showCompass: false,
     // visualizePitch: true
   });
-  const drawControl = new smartmapx.DrawControl({ // FIXME could not find DrawControl in the dev doc.
-    // sample code: https://dev.smartmapx.com/docs/javascriptAPI/#control_4
-    displayControlsDefault: true, // 控件“合并”，“取消合并”
-    controls: {
+  /**
+   * doc about Draw
+   * https://github.com/mapbox/mapbox-gl-draw/blob/main/docs/API.md
+   * https://github.com/mapbox/mapbox-gl-draw/blob/main/docs/EXAMPLES.md
+   * https://github.com/mapbox/mapbox-gl-draw/blob/main/docs/MODES.md
+   */
+  const drawControl = new smartmapx.DrawControl({
+    displayControlsDefault: true,
+    /* controls: {
       point: true,
       line_string: true,
       polygon: true,
       trash: true
-    }
+      combine_features: true,
+      uncombine_features: true
+    } */
   });
 
   map

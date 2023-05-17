@@ -42,8 +42,8 @@ export const useGeoInfoPanelStore = defineStore({
   },
 });
 
-export const useCustomizedFeaturesStore = defineStore({
-  id: 'CustomizedFeatures',
+export const useDrawFeaturesStore = defineStore({
+  id: 'DrawFeatures',
   state: () => ({
     features: {},
   }),
@@ -54,8 +54,8 @@ export const useCustomizedFeaturesStore = defineStore({
     addFeature(params) {
       this.features[params.id] = params.feature;
     },
-    removeFeature(params) {
-      this.features[params.id] = undefined;
+    deleteFeature(params) {
+      delete this.features[params.id];
     },
     updateFeature(params) {
       this.features[params.id] = params.feature;
