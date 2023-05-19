@@ -9,6 +9,7 @@ import { computed, onMounted, reactive } from 'vue';
 import init from '../utils/initMap';
 import GeoInfoPanel from './GeoInfoPanel.vue';
 import { useGeoInfoPanelStore, useDrawFeaturesStore } from '../stores/states';
+import * as turf from '@turf/turf'
 
 let map;
 let markerCrosshair;
@@ -52,11 +53,29 @@ const registerMapMoveEvent = () => {
       lng: center.lng,
       lat: center.lat
     });
+
+    // Check that crosshair is centered correctly by adding points at the same coordinates.
+    /* map
+      .getSource('pointCrosshair')
+      .setData({
+        'type': 'FeatureCollection',
+        'features': [turf.point([center.lng, center.lat])]
+      }); */
   });
 
   map.on('move', () => {
-    markerCrosshair.setLngLat(map.getCenter());
-  })
+    const { lng, lat } = map.getCenter();
+
+    markerCrosshair.setLngLat([lng, lat]);
+
+    // Check that crosshair is centered correctly by adding points at the same coordinates.
+    /* map
+      .getSource('pointCrosshair')
+      .setData({
+        'type': 'FeatureCollection',
+        'features': [turf.point([lng, lat])]
+      }); */
+  });
 };
 const registerMapDataEvent = () => { };
 const registerMapMouseEvent = () => {
@@ -140,6 +159,8 @@ const parseFeature = (feature) => {
 };
 
 const addInCrosshair = () => {
+  const { lng, lat } = map.getCenter();
+
   // Create a DOM element for marker.
   const el = document.createElement('div');
   el.className = 'cross-hair';
@@ -151,10 +172,26 @@ const addInCrosshair = () => {
   // Add markers to the map.
   markerCrosshair = new smartmapx.Marker(el, {
     offset: [0, 0],
-    // anchor: 'center' // TODO 检查crosshair的中心位置是否正确，通过添加同样坐标的point，检查是否重合。
-  }).setLngLat(map.getCenter()).addTo(map);
+  }).setLngLat([lng, lat]).addTo(map);
 
-  // TODO 添加点图层。
+  // Check that crosshair is centered correctly by adding points at the same coordinates.
+  /* map
+    .addSource('pointCrosshair', {
+      type: 'geojson',
+      data: {
+        'type': 'FeatureCollection',
+        'features': [turf.point([lng, lat])]
+      }
+    })
+    .addLayer({
+      id: 'pointCrosshairLayer',
+      type: 'circle',
+      source: 'pointCrosshair',
+      paint: {
+        'circle-radius': 1,
+        'circle-stroke-width': 1,
+      },
+    }); */
 }
 
 </script>
@@ -166,17 +203,9 @@ const addInCrosshair = () => {
   left: 210px;
   z-index: 1;
 }
-
 </style>
 
 <style>
 .cross-hair {
-  position: absolute;
-  /* margin-left: -10px; */
-  /* margin-top: -10px; */
-  width: 20px;
-  height: 20px;
-  /* transform: translate3d(-30px, 402px, 0px); */
-  z-index: 400;
 }
 </style>

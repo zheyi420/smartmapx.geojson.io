@@ -4,15 +4,15 @@
   - Map Bound
   - Map Center
 
-- [ ] Mark the input coordinate.
-
-- [ ] Code Editor
+- [ ] Code Editor Panel
   - GeoJSON Editor
     - display the geojson of drawn features.
     - render the geometry from editor.
       - [ ] Geometric validity check.
 
-- [ ] Geo File Loader
+- [ ] Geo Data Loader
+  > data format checking should be involved.
+  - [ ] WKT string input.
   - [ ] GeoJSON file
     - [ ] load from local disk.
     - [ ] load from url.
