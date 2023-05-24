@@ -1,5 +1,5 @@
 <template>
-  <div id="editor-panel">
+  <div id="right-panel">
     <div class="top border-b border-solid border-gray-200">
       <div class="buttons flex">
         <button class="grow" :class="{ active: buttonActive.JSON }" @click="onButtonClick" title="JSON Source">
@@ -18,7 +18,12 @@
       </div>
     </div>
     <div class="pane">
-      <CodeMirror></CodeMirror>
+      <EditorPane
+        :config="config"
+        :language="currentLangCode.language"
+        :code="currentLangCode.code"
+        class="editor-pane"
+      />
     </div>
   </div>
 </template>
@@ -26,7 +31,7 @@
 <script setup>
 import { watch, computed, onMounted, reactive } from 'vue';
 import { useDrawFeaturesStore } from '../stores/states';
-import CodeMirror from './CodeMirror.vue';
+import EditorPane from './EditorPane.vue';
 
 const store_DrawFeatures = useDrawFeaturesStore();
 
@@ -40,6 +45,11 @@ watch(store_DrawFeatures.features,
 
 onMounted(() => {
   console.log('EditorPanel mounted--------------');
+  fetch('/init.geojson')
+    .then(res => res.json())
+    .then(json => {
+      currentLangCode.code = JSON.stringify(json, null, 2);
+    })
 });
 
 // top bar buttons click event
@@ -55,6 +65,22 @@ const onButtonClick = (e) => {
   buttonActive.Help = false;
   buttonActive[e.target.innerText.trim()] = true;
 };
+
+// editor pane
+const config = reactive({
+  disabled: false,
+  indentWithTab: true,
+  tabSize: 2,
+  autofocus: true,
+  height: 'auto',
+  language: 'json',
+  theme: 'default'
+});
+const currentLangCode = reactive({
+  language: 'json',
+  code: ''
+});
+
 
 </script>
 
@@ -110,5 +136,9 @@ const onButtonClick = (e) => {
   bottom: 0;
   width: 100%;
   overflow: auto;
+}
+.editor-pane {
+  width: 100%;
+  height: 100%;
 }
 </style>

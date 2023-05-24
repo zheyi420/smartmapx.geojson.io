@@ -1,5 +1,5 @@
 <template>
-  <div id="map">
+  <div id="mapContainer">
     <GeoInfoPanel class="geo-info-panel"></GeoInfoPanel>
   </div>
 </template>
@@ -16,7 +16,7 @@ let markerCrosshair;
 
 onMounted(() => {
   map = init({
-    container: 'map'
+    container: 'mapContainer'
   });
 
   map.on('load', () => {
@@ -206,6 +206,4 @@ const addInCrosshair = () => {
 </style>
 
 <style>
-.cross-hair {
-}
 </style>

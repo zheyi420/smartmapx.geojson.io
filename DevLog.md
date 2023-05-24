@@ -1,16 +1,16 @@
-- [x] Geo Info Panel
-  - Mouse Coords
-  - Features Bound
-  - Map Bound
-  - Map Center
+- Geo Info Panel
+  - [x] Mouse Coords
+  - [ ] Features Bound
+  - [x] Map Bound
+  - [x] Map Center
 
-- [ ] Code Editor Panel
+- Code Editor Panel
   - GeoJSON Editor
     - display the geojson of drawn features.
     - render the geometry from editor.
       - [ ] Geometric validity check.
 
-- [ ] Geo Data Loader
+- Geo Data Loader
   > data format checking should be involved.
   - [ ] WKT string input.
   - [ ] GeoJSON file
@@ -23,7 +23,7 @@
     - [ ] load from local disk.
     - [ ] load from url.
 
-- [ ] Save Data
+- Save Data
   - [ ] GeoJSON file
   - [ ] CSV file, save geometry in WKT format.
   - [ ] Shapefile
