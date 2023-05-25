@@ -24,19 +24,8 @@
 </template>
 
 <script setup>
-import { watch, computed, onMounted, reactive } from 'vue';
-import { useDrawFeaturesStore } from '../stores/states';
+import { computed, onMounted, reactive } from 'vue';
 import EditorPane from './EditorPane.vue';
-
-const store_DrawFeatures = useDrawFeaturesStore();
-
-watch(store_DrawFeatures.features,
-  (newVal, oldVal) => {
-    console.log('newVal:', newVal);
-    console.log('oldVal:', oldVal);
-  },
-  { deep: true }
-);
 
 // top bar buttons click event
 const buttonActive = reactive({

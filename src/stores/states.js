@@ -45,7 +45,7 @@ export const useGeoInfoPanelStore = defineStore({
 export const useDrawFeaturesStore = defineStore({
   id: 'DrawFeatures',
   state: () => ({
-    features: {},
+    features: {}, // TODO is it a reactive object?
   }),
   getters: {
     // getFeatures: (state) => state.features,

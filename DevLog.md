@@ -7,7 +7,9 @@
 - Code Editor Panel
   - GeoJSON Editor
     - display the geojson of drawn features.
+      - [ ] process the drawn features to geojson.
     - render the geometry from editor.
+      - [ ] GeoJSON format check.
       - [ ] Geometric validity check.
 
 - Geo Data Loader

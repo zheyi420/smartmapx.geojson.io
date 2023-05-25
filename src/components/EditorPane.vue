@@ -33,10 +33,9 @@
 import { reactive, shallowRef, computed, watch, onMounted } from 'vue';
 import { Codemirror } from 'vue-codemirror';
 import { json } from '@codemirror/lang-json';
-import { useEditorGeoJSONStore } from '../stores/states';
+import { useEditorGeoJSONStore, useDrawFeaturesStore } from '../stores/states';
 
-const store_EditorGeoJSON = useEditorGeoJSONStore();
-
+// Codemirror Component Props *******************************************************
 // https://github.com/surmon-china/vue-codemirror#component-props
 const config = reactive({
   autofocus: false,
@@ -49,18 +48,63 @@ const config = reactive({
   language: 'json',
   theme: 'default'
 });
+const extensions = [json()];
 const code = shallowRef('');
+
+
+// Watch DrawFeaturesStore Features ****************************************************
+// Process the features stored in the useDrawFeaturesStore to geojson code.
+// And output the geojson code to the editor.
+const store_DrawFeatures = useDrawFeaturesStore();
+
+watch(
+  store_DrawFeatures.features,
+  (_features) => {
+    generateGeoJSON(_features);
+  },
+  { deep: true }
+);
+
+const generateGeoJSON = (_features) => {
+  const geojsonObject = {
+    type: 'FeatureCollection',
+    features: []
+  };
+  for (const featureID in _features) {
+    if (Object.hasOwnProperty.call(_features, featureID)) {
+      const feature = _features[featureID];
+      geojsonObject.features.push(feature);
+    }
+  }
+  code.value = JSON.stringify(geojsonObject, null, 2);
+};
+
+// Watch Editor Code ******************************************************************
+// Updated the editor code to the useEditorGeoJSONStore.
+const store_EditorGeoJSON = useEditorGeoJSONStore();
+
 watch(
   code,
   (_code) => {
     // console.log('_code:', _code);
-    store_EditorGeoJSON.setEditorGeoJSON(JSON.parse(_code));
+    // check
+    if (checkGeojsonFormat(_code) && checkGeometricValidity(_code)) {
+      store_EditorGeoJSON.setEditorGeoJSON(JSON.parse(_code));
+    }
   }
 );
 
-const extensions = [json()]; // const extensions = [json(), oneDark];
+// TODO GeoJSON format check.
+const checkGeojsonFormat = (_code) => {
+  return true;
+};
 
-// Codemirror Component Events
+// TODO Geometric validity check.
+const checkGeometricValidity = (_code) => {
+  return true;
+};
+
+// Codemirror Component Events *******************************************************
 const handleContentUpdate = (value, viewUpdate) => {
   // console.log('handleContentUpdate value:', value);
 }
@@ -93,6 +137,7 @@ const handleBlur = (viewUpdate) => {
   // console.log('blur:', viewUpdate);
 }
 
+// onMounted ****************************************************************************
 onMounted(() => {
   fetch('/init.geojson')
     .then(res => res.json())
@@ -103,7 +148,6 @@ onMounted(() => {
       console.log('err:', err);
     });
 });
-
 
 </script>
 

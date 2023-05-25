@@ -5,34 +5,29 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive } from 'vue';
+import { computed, onMounted, reactive, watch } from 'vue';
 import init from '../utils/initMap';
 import GeoInfoPanel from './GeoInfoPanel.vue';
-import { useGeoInfoPanelStore, useDrawFeaturesStore } from '../stores/states';
+import { useGeoInfoPanelStore, useDrawFeaturesStore, useEditorGeoJSONStore } from '../stores/states';
 import * as turf from '@turf/turf'
 
-let map;
-let markerCrosshair;
 
-onMounted(() => {
-  map = init({
-    container: 'mapContainer'
-  });
+// Generate features from the editor code ****************************************************
+const store_EditorGeoJSON = useEditorGeoJSONStore();
 
-  map.on('load', () => {
-    // Add in a crosshair for the map
-    addInCrosshair();
+watch(
+  store_EditorGeoJSON.objectEditorGeoJSON,
+  (_geojsonObject) => {
+    // update(_geojsonObject);
+  },
+  { deep: true }
+);
 
-    // register events
-    registerMapMoveEvent();
-    registerMapDataEvent();
-    registerMapMouseEvent();
-    registerDrawEvent();
 
-    map.resize(); // 用于初始化 GeoInfoPanel 中的 MapCoords, CenterCoords
-  });
-});
 
+
+
+// Update the Geo Info Panel ****************************************************************
 const store_GeoInfoPanel = useGeoInfoPanelStore();
 const registerMapMoveEvent = () => {
   map.on('moveend', () => {
@@ -48,7 +43,7 @@ const registerMapMoveEvent = () => {
       }
     });
 
-    const center = map.getCenter(); // bounds.getCenter(); // TODO 两者获取的中心点不一样。
+    const center = map.getCenter(); // bounds.getCenter(); // TODO The center points obtained by the two are different.
     store_GeoInfoPanel.recordCenterCoords({
       lng: center.lng,
       lat: center.lat
@@ -84,11 +79,10 @@ const registerMapMouseEvent = () => {
   });
 };
 
+// Store Draw Features *********************************************************************
 const store_DrawFeatures = useDrawFeaturesStore();
-/**
- * Register draw events
- * 几何编辑获取更新几何数据到编辑器中。
- */
+// Register draw events.
+// Update the draw features store.
 const registerDrawEvent = () => {
   map
     .on('draw.create', (e) => {
@@ -149,7 +143,6 @@ const registerDrawEvent = () => {
       }
     });
 };
-
 const parseFeature = (feature) => {
   return {
     type: feature.type,
@@ -158,6 +151,8 @@ const parseFeature = (feature) => {
   };
 };
 
+// Add crosshair to the map ***************************************************************
+let markerCrosshair;
 const addInCrosshair = () => {
   const { lng, lat } = map.getCenter();
 
@@ -193,6 +188,27 @@ const addInCrosshair = () => {
       },
     }); */
 }
+
+// onMounted *****************************************************************************
+let map;
+onMounted(() => {
+  map = init({
+    container: 'mapContainer'
+  });
+
+  map.on('load', () => {
+    // Add in a crosshair for the map
+    addInCrosshair();
+
+    // register events
+    registerMapMoveEvent();
+    registerMapDataEvent();
+    registerMapMouseEvent();
+    registerDrawEvent();
+
+    map.resize(); // 用于初始化 GeoInfoPanel 中的 MapCoords, CenterCoords
+  });
+});
 
 </script>
 
