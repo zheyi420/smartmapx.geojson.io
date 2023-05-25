@@ -62,3 +62,16 @@ export const useDrawFeaturesStore = defineStore({
     },
   },
 });
+
+export const useEditorGeoJSONStore = defineStore({
+  id: 'EditorGeoJSON',
+  state: () => ({
+    objectEditorGeoJSON: {},
+  }),
+  getters: {},
+  actions: {
+    setEditorGeoJSON(object) {
+      this.objectEditorGeoJSON = object;
+    },
+  },
+});

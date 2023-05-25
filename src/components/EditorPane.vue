@@ -1,8 +1,15 @@
 <template>
   <div class="editor">
     <div class="main">
+      <!-- https://github.com/surmon-china/vue-codemirror#component-props -->
+      <!-- https://github.com/surmon-china/vue-codemirror#component-events -->
       <codemirror
         v-model="code"
+        :autofocus="config.autofocus"
+        :indent-with-tab="config.indentWithTab"
+        :tab-size="config.tabSize"
+        :disabled="config.disabled"
+        :placeholder="config.placeholder"
         :style="{
           width: '100%',
           height: config.height,
@@ -10,13 +17,14 @@
           color: '#333',
           textAlign: 'left'
         }"
-        placeholder="Please enter the code."
+        :auto-destroy="config.autoDestroy"
         :extensions="extensions"
-        :autofocus="config.autofocus"
-        :disabled="config.disabled"
-        :indent-with-tab="config.indentWithTab"
-        :tab-size="config.tabSize"
-      />
+        @update:modelValue="handleContentUpdate"
+        @update="handleStateUpdate"
+        @ready="handleReady"
+        @focus="handleFocus"
+        @blur="handleBlur"
+      ></codemirror>
     </div>
   </div>
 </template>
@@ -25,56 +33,78 @@
 import { reactive, shallowRef, computed, watch, onMounted } from 'vue';
 import { Codemirror } from 'vue-codemirror';
 import { json } from '@codemirror/lang-json';
-import { oneDark } from '@codemirror/theme-one-dark'
+import { useEditorGeoJSONStore } from '../stores/states';
 
-const props = defineProps({
-  config: {
-    type: Object,
-    required: true
-  },
-  code: {
-    type: String,
-    required: true
-  },
-  language: String,
+const store_EditorGeoJSON = useEditorGeoJSONStore();
+
+// https://github.com/surmon-china/vue-codemirror#component-props
+const config = reactive({
+  autofocus: false,
+  indentWithTab: true,
+  tabSize: 2,
+  disabled: false,
+  placeholder: 'Please input the GeoJSON data.',
+  autoDestroy: true,
+  height: 'auto',
+  language: 'json',
+  theme: 'default'
 });
+const code = shallowRef('');
+watch(
+  code,
+  (_code) => {
+    // console.log('_code:', _code);
+    store_EditorGeoJSON.setEditorGeoJSON(JSON.parse(_code));
+  }
+);
 
-const log = console.log;
-const code = shallowRef(props.code);
-// const extensions = [json(), oneDark];
-const extensions = [json()];
-const cmView = shallowRef();
-const handleReady = ({ view }) => {
-  cmView.value = view
+const extensions = [json()]; // const extensions = [json(), oneDark];
+
+// Codemirror Component Events
+const handleContentUpdate = (value, viewUpdate) => {
+  // console.log('handleContentUpdate value:', value);
 }
-
 const state = reactive({
   lines: null,
   cursor: null,
   selected: null,
   length: null
 })
-
-const handleStateUpdate = (viewUpdate) => {
+const handleStateUpdate = (params) => {
+  // console.log('handleStateUpdate params:', params);
   // selected
-  const ranges = viewUpdate.state.selection.ranges
+  /* const ranges = viewUpdate.state.selection.ranges
   state.selected = ranges.reduce((plus, range) => plus + range.to - range.from, 0)
-  state.cursor = ranges[0].anchor
+  state.cursor = ranges[0].anchor */
   // length
-  state.length = viewUpdate.state.doc.length
-  state.lines = viewUpdate.state.doc.lines
+  /* state.length = viewUpdate.state.doc.length
+  state.lines = viewUpdate.state.doc.lines */
   // log('viewUpdate', viewUpdate)
+}
+// const cmView = shallowRef();
+const handleReady = (params) => {
+  // console.log('handleReady params:', params);
+  // cmView.value = params.view
+}
+const handleFocus = (viewUpdate) => {
+  // console.log('focus:', viewUpdate);
+}
+const handleBlur = (viewUpdate) => {
+  // console.log('blur:', viewUpdate);
 }
 
 onMounted(() => {
-  watch(
-    () => props.code,
-    (_code) => {
-      code.value = _code;
-      console.log('4');
-    }
-  )
-})
+  fetch('/init.geojson')
+    .then(res => res.json())
+    .then(json => {
+      code.value = JSON.stringify(json, null, 2);
+    })
+    .catch(err => {
+      console.log('err:', err);
+    });
+});
+
+
 </script>
 
 <style scoped>

@@ -18,12 +18,7 @@
       </div>
     </div>
     <div class="pane">
-      <EditorPane
-        :config="config"
-        :language="currentLangCode.language"
-        :code="currentLangCode.code"
-        class="editor-pane"
-      />
+      <EditorPane class="editor-pane"></EditorPane>
     </div>
   </div>
 </template>
@@ -43,15 +38,6 @@ watch(store_DrawFeatures.features,
   { deep: true }
 );
 
-onMounted(() => {
-  console.log('EditorPanel mounted--------------');
-  fetch('/init.geojson')
-    .then(res => res.json())
-    .then(json => {
-      currentLangCode.code = JSON.stringify(json, null, 2);
-    })
-});
-
 // top bar buttons click event
 const buttonActive = reactive({
   JSON: true,
@@ -65,22 +51,6 @@ const onButtonClick = (e) => {
   buttonActive.Help = false;
   buttonActive[e.target.innerText.trim()] = true;
 };
-
-// editor pane
-const config = reactive({
-  disabled: false,
-  indentWithTab: true,
-  tabSize: 2,
-  autofocus: true,
-  height: 'auto',
-  language: 'json',
-  theme: 'default'
-});
-const currentLangCode = reactive({
-  language: 'json',
-  code: ''
-});
-
 
 </script>
 
