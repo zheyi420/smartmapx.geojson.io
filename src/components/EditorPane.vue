@@ -139,7 +139,7 @@ const handleBlur = (viewUpdate) => {
 
 // onMounted ****************************************************************************
 onMounted(() => {
-  fetch('/init.geojson')
+  fetch(`${import.meta.env.VITE_BUILD_PATH_PREFIX}/init.geojson`)
     .then(res => res.json())
     .then(json => {
       code.value = JSON.stringify(json, null, 2);

@@ -159,7 +159,7 @@ const addInCrosshair = () => {
   // Create a DOM element for marker.
   const el = document.createElement('div');
   el.className = 'cross-hair';
-  el.style.backgroundImage = 'url(/crosshair.png)';
+  el.style.backgroundImage = `url(${import.meta.env.VITE_BUILD_PATH_PREFIX}/crosshair.png)`;
   el.style.width = `20px`;
   el.style.height = `20px`;
   el.style.backgroundSize = '100%';
